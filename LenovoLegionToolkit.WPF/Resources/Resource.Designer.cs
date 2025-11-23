@@ -3452,15 +3452,6 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update {0} available!.
-        /// </summary>
-        public static string Notification_UpdateAvailable {
-            get {
-                return ResourceManager.GetString("Notification_UpdateAvailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Backlight {0}.
         /// </summary>
         public static string Notification_WhiteKeyboardBacklight {

@@ -89,7 +89,6 @@ public class NotificationsManager
                 NotificationType.SpectrumBacklightPresetChanged => _settings.Store.Notifications.KeyboardBacklight,
                 NotificationType.TouchpadOn => _settings.Store.Notifications.TouchpadLock,
                 NotificationType.TouchpadOff => _settings.Store.Notifications.TouchpadLock,
-                NotificationType.UpdateAvailable => _settings.Store.Notifications.UpdateAvailable,
                 NotificationType.WhiteKeyboardBacklightOff => _settings.Store.Notifications.KeyboardBacklight,
                 NotificationType.WhiteKeyboardBacklightChanged => _settings.Store.Notifications.KeyboardBacklight,
                 _ => throw new ArgumentException(nameof(notification.Type))
@@ -137,7 +136,6 @@ public class NotificationsManager
                 NotificationType.SpectrumBacklightPresetChanged => SymbolRegular.Lightbulb24,
                 NotificationType.TouchpadOn => SymbolRegular.Tablet24,
                 NotificationType.TouchpadOff => SymbolRegular.Tablet24,
-                NotificationType.UpdateAvailable => SymbolRegular.ArrowSync24,
                 NotificationType.WhiteKeyboardBacklightOff => SymbolRegular.Lightbulb24,
                 NotificationType.WhiteKeyboardBacklightChanged => SymbolRegular.Lightbulb24,
                 _ => throw new ArgumentException(nameof(notification.Type))
@@ -194,7 +192,6 @@ public class NotificationsManager
                 NotificationType.SpectrumBacklightPresetChanged => string.Format(Resource.Notification_SpectrumKeyboardBacklight_Profile, notification.Args),
                 NotificationType.TouchpadOn => Resource.Notification_TouchpadOn,
                 NotificationType.TouchpadOff => Resource.Notification_TouchpadOff,
-                NotificationType.UpdateAvailable => string.Format(Resource.Notification_UpdateAvailable, notification.Args),
                 NotificationType.WhiteKeyboardBacklightOff => string.Format(Resource.Notification_WhiteKeyboardBacklight, notification.Args),
                 NotificationType.WhiteKeyboardBacklightChanged => string.Format(Resource.Notification_WhiteKeyboardBacklight, notification.Args),
                 _ => throw new ArgumentException(nameof(notification.Type))
@@ -210,7 +207,6 @@ public class NotificationsManager
 
             Action? clickAction = notification.Type switch
             {
-                NotificationType.UpdateAvailable => UpdateAvailableAction,
                 _ => null
             };
 
@@ -302,14 +298,5 @@ public class NotificationsManager
                 _windows.Add(nw);
             }
         }
-    }
-
-    private static void UpdateAvailableAction()
-    {
-        if (App.Current.MainWindow is not MainWindow mainWindow)
-            return;
-
-        mainWindow.BringToForeground();
-        mainWindow.ShowUpdateWindow();
     }
 }

@@ -9,14 +9,11 @@ using System.Windows;
 using System.Windows.Input;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Listeners;
-using LenovoLegionToolkit.Lib.Messaging;
-using LenovoLegionToolkit.Lib.Messaging.Messages;
 using LenovoLegionToolkit.Lib.Settings;
 using LenovoLegionToolkit.Lib.SoftwareDisabler;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Extensions;
 using LenovoLegionToolkit.WPF.Pages;
-using LenovoLegionToolkit.WPF.Resources;
 using LenovoLegionToolkit.WPF.Utils;
 using LenovoLegionToolkit.WPF.Windows.Utils;
 using Microsoft.Xaml.Behaviors.Core;
@@ -39,7 +36,6 @@ public partial class MainWindow
     private readonly VantageDisabler _vantageDisabler = IoCContainer.Resolve<VantageDisabler>();
     private readonly LegionZoneDisabler _legionZoneDisabler = IoCContainer.Resolve<LegionZoneDisabler>();
     private readonly FnKeysDisabler _fnKeysDisabler = IoCContainer.Resolve<FnKeysDisabler>();
-    private readonly UpdateChecker _updateChecker = IoCContainer.Resolve<UpdateChecker>();
 
     private TrayHelper? _trayHelper;
 
@@ -98,7 +94,6 @@ public partial class MainWindow
 
         LoadDeviceInfo();
         UpdateIndicators();
-        CheckForUpdates();
 
         InputBindings.Add(new KeyBinding(new ActionCommand(_navigationStore.NavigateToNext), Key.Tab, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(new ActionCommand(_navigationStore.NavigateToPrevious), Key.Tab, ModifierKeys.Control | ModifierKeys.Shift));
@@ -165,8 +160,6 @@ public partial class MainWindow
     {
         if (!IsVisible)
             return;
-
-        CheckForUpdates();
     }
 
     private void OpenLogIndicator_Click(object sender, MouseButtonEventArgs e) => OpenLog();
@@ -187,16 +180,6 @@ public partial class MainWindow
             return;
 
         ShowDeviceInfoWindow();
-    }
-
-    private void UpdateIndicator_Click(object sender, RoutedEventArgs e) => ShowUpdateWindow();
-
-    private void UpdateIndicator_KeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key is not Key.Enter and not Key.Space)
-            return;
-
-        ShowUpdateWindow();
     }
 
     private void LoadDeviceInfo()
@@ -235,46 +218,6 @@ public partial class MainWindow
             _ = await _legionZoneDisabler.GetStatusAsync().ConfigureAwait(false);
             _ = await _fnKeysDisabler.GetStatusAsync().ConfigureAwait(false);
         });
-    }
-
-    public void CheckForUpdates(bool manualCheck = false)
-    {
-        Task.Run(() => _updateChecker.CheckAsync(manualCheck))
-            .ContinueWith(async updatesAvailable =>
-            {
-                var result = updatesAvailable.Result;
-                if (result is null)
-                {
-                    _updateIndicator.Visibility = Visibility.Collapsed;
-
-                    if (manualCheck && WindowState != WindowState.Minimized)
-                    {
-                        switch (_updateChecker.Status)
-                        {
-                            case UpdateCheckStatus.Success:
-                                await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Success_Title);
-                                break;
-                            case UpdateCheckStatus.RateLimitReached:
-                                await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Error_Title, Resource.MainWindow_CheckForUpdates_Error_ReachedRateLimit_Message, SnackbarType.Error);
-                                break;
-                            case UpdateCheckStatus.Error:
-                                await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Error_Title, Resource.MainWindow_CheckForUpdates_Error_Unknown_Message, SnackbarType.Error);
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    var versionNumber = result.ToString(3);
-
-                    _updateIndicatorText.Text =
-                        string.Format(Resource.MainWindow_UpdateAvailableWithVersion, versionNumber);
-                    _updateIndicator.Visibility = Visibility.Visible;
-
-                    if (WindowState == WindowState.Minimized)
-                        MessagingCenter.Publish(new NotificationMessage(NotificationType.UpdateAvailable, versionNumber));
-                }
-            }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     private void RestoreSize()
@@ -325,12 +268,6 @@ public partial class MainWindow
     private void ShowDeviceInfoWindow()
     {
         var window = new DeviceInformationWindow { Owner = this };
-        window.ShowDialog();
-    }
-
-    public void ShowUpdateWindow()
-    {
-        var window = new UpdateWindow { Owner = this };
         window.ShowDialog();
     }
 

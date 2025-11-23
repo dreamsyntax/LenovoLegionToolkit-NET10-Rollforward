@@ -41,7 +41,6 @@ public class IoCModule : Module
         builder.Register<RGBKeyboardSettings>();
         builder.Register<SpectrumKeyboardSettings>();
         builder.Register<SunriseSunsetSettings>();
-        builder.Register<UpdateCheckSettings>();
 
         builder.Register<AlwaysOnUSBFeature>();
         builder.Register<BatteryFeature>();
@@ -124,7 +123,6 @@ public class IoCModule : Module
         builder.Register<WindowsPowerModeController>();
         builder.Register<WindowsPowerPlanController>();
 
-        builder.Register<UpdateChecker>();
         builder.Register<WarrantyChecker>();
 
         builder.Register<PackageDownloaderFactory>();

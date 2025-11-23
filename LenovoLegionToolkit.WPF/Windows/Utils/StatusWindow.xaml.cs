@@ -23,15 +23,13 @@ public partial class StatusWindow
         string? godModePresetName,
         GPUStatus? gpuStatus,
         BatteryInformation? batteryInformation,
-        BatteryState? batteryState,
-        bool hasUpdate)
+        BatteryState? batteryState)
     {
         public PowerModeState? PowerModeState { get; } = powerModeState;
         public string? GodModePresetName { get; } = godModePresetName;
         public GPUStatus? GPUStatus { get; } = gpuStatus;
         public BatteryInformation? BatteryInformation { get; } = batteryInformation;
         public BatteryState? BatteryState { get; } = batteryState;
-        public bool HasUpdate { get; } = hasUpdate;
     }
 
     public static async Task<StatusWindow> CreateAsync() => new(await GetStatusWindowDataAsync());
@@ -42,14 +40,12 @@ public partial class StatusWindow
         var godModeController = IoCContainer.Resolve<GodModeController>();
         var gpuController = IoCContainer.Resolve<GPUController>();
         var batteryFeature = IoCContainer.Resolve<BatteryFeature>();
-        var updateChecker = IoCContainer.Resolve<UpdateChecker>();
 
         PowerModeState? state = null;
         string? godModePresetName = null;
         GPUStatus? gpuStatus = null;
         BatteryInformation? batteryInformation = null;
         BatteryState? batteryState = null;
-        var hasUpdate = false;
 
         try
         {
@@ -85,13 +81,8 @@ public partial class StatusWindow
         }
         catch { /* Ignored */ }
 
-        try
-        {
-            hasUpdate = await updateChecker.CheckAsync(false) is not null;
-        }
-        catch { /* Ignored */ }
 
-        return new(state, godModePresetName, gpuStatus, batteryInformation, batteryState, hasUpdate);
+        return new(state, godModePresetName, gpuStatus, batteryInformation, batteryState);
     }
 
     private StatusWindow(StatusWindowData data)
@@ -126,7 +117,6 @@ public partial class StatusWindow
         RefreshPowerMode(data.PowerModeState, data.GodModePresetName);
         RefreshDiscreteGpu(data.GPUStatus);
         RefreshBattery(data.BatteryInformation, data.BatteryState);
-        RefreshUpdate(data.HasUpdate);
     }
 
     private void StatusWindow_Loaded(object sender, RoutedEventArgs e) => MoveBottomRightEdgeOfWindowToMousePosition();
@@ -262,6 +252,4 @@ public partial class StatusWindow
         _batteryMinDischargeValueLabel.Content = $"{batteryInformation.Value.MinDischargeRate / 1000.0:+0.00;-0.00;0.00} W";
         _batteryMaxDischargeValueLabel.Content = $"{batteryInformation.Value.MaxDischargeRate / 1000.0:+0.00;-0.00;0.00} W";
     }
-
-    private void RefreshUpdate(bool hasUpdate) => _updateIndicator.Visibility = hasUpdate ? Visibility.Visible : Visibility.Collapsed;
 }
