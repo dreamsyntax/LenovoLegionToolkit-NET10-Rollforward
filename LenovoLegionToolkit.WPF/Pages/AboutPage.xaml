@@ -49,11 +49,11 @@
         <wpfui:Hyperlink
             Content="{x:Static resources:Resource.AboutPage_ProjectWebsiteOnGitHub}"
             Icon="Link24"
-            NavigateUri="https://github.com/BartoszCichecki/LenovoLegionToolkit" />
+            NavigateUri="https://github.com/dreamsyntax/LenovoLegionToolkit-NET10-Rollforward" />
         <wpfui:Hyperlink
             Content="{x:Static resources:Resource.AboutPage_LatestReleaseOnGitHub}"
             Icon="Link24"
-            NavigateUri="https://github.com/BartoszCichecki/LenovoLegionToolkit/releases/latest" />
+            NavigateUri="https://github.com/dreamsyntax/LenovoLegionToolkit-NET10-Rollforward/releases" />
 
         <TextBlock
             Padding="0,24,0,8"
