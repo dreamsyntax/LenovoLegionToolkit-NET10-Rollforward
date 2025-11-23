@@ -3,11 +3,11 @@
 #define MyAppName "Lenovo Legion Toolkit"
 #define MyAppNameCompact "LenovoLegionToolkit"
 #define MyAppPublisher "Bartosz Cichecki"
-#define MyAppURL "https://github.com/BartoszCichecki/LenovoLegionToolkit"
+#define MyAppURL "https://github.com/dreamsyntax/LenovoLegionToolkit-NET10-Rollforward"
 #define MyAppExeName "Lenovo Legion Toolkit.exe"
 
 #ifndef MyAppVersion
-  #define MyAppVersion "0.0.1"
+  #define MyAppVersion "2.26.1"
 #endif
 
 [Setup]
